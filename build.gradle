@@ -1,0 +1,93 @@
+buildscript {    // Configuration for building
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'com.google.cloud.tools:appengine-gradle-plugin:2.4.3' // If a newer version is available, use it
+	}
+}
+
+plugins {
+	id 'org.springframework.boot' version '2.7.1'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+apply plugin: 'java'                              // standard Java tasks
+apply plugin: 'com.google.cloud.tools.appengine'  // App Engine tasks
+
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'com.sha.PerceptdriveApplication',
+				manifest.attributes["Main-Class"] = "com.sha.PerceptdriveApplication"
+		)
+	}
+}
+
+group = 'com.sha'
+version = '1.0.0'
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+	implementation 'org.springframework.boot:spring-boot-starter-jersey'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+	// https://mvnrepository.com/artifact/com.twilio.sdk/twilio
+	implementation 'com.twilio.sdk:twilio:8.36.0'
+	implementation 'org.apache.logging.log4j:log4j-api:2.19.0'
+	implementation 'org.apache.logging.log4j:log4j-web:2.19.0'
+	implementation 'org.apache.logging.log4j:log4j:2.19.0'
+	implementation 'ma.glasnost.orika:orika-core:1.5.4'
+	implementation 'com.sparkjava:spark-core:2.9.4'
+	implementation 'com.github.alexdlaird:java-ngrok:1.5.6'
+	implementation 'mysql:mysql-connector-java:8.0.30'
+	implementation 'com.google.appengine:appengine-api-1.0-sdk:2.0.9'
+	implementation 'com.google.cloud:google-cloud:0.8.0'
+	implementation 'org.apache.commons:commons-text:1.10.0'
+	implementation 'org.apache.commons:commons-lang3:3.0'
+
+	implementation platform('com.google.cloud:libraries-bom:26.1.3')
+	implementation 'com.google.cloud:google-cloud-language:2.4.1'
+
+	compileOnly 'org.projectlombok:lombok'
+
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+appengine {  // App Engine tasks configuration
+	deploy {   // deploy configuration
+		projectId = 'braided-hangout-355400'
+		version = '3'
+	}
+}
+
+bootJar {
+	archiveName("perceptdrive.jar")
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
